@@ -4,9 +4,32 @@ ADMIN_KB = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Добавить нового админа',
                           callback_data='new_admin')],
     [InlineKeyboardButton(text='Добавить новый дедлайн',
-                          callback_data='new_deadline')],
+                          callback_data='new_deadline', )],
 ]
 )
+
+ADMIN_CANCEL = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Вернуться в меню',
+                          callback_data='back_to_menu')],
+]
+)
+
+ADMIN_DEADLINE_DATE_BACK_CANCEL = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Вернуться в главное меню',
+                          callback_data='back_to_menu')],
+    [InlineKeyboardButton(text='Вернуться на шаг назад(к дате)',
+                          callback_data='back_to_deadline_date_invitation')],
+]
+)
+
+ADMIN_DEADLINE_NAME_BACK_CANCEL = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Вернуться в главное меню',
+                          callback_data='back_to_menu')],
+    [InlineKeyboardButton(text='Вернуться на шаг назад(к имени события дедлайна)',
+                          callback_data='back_to_deadline_name_invitation')],
+]
+)
+
 
 AGREEMENT = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='✅ Принимаю',

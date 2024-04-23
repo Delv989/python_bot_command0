@@ -12,29 +12,103 @@ import keyboards
 router = Router()
 users_test = {}
 
-@router.callback_query(utils.Admin.choose_option)
-async def answer(callback: CallbackQuery, state: FSMContext):
-    if callback.data == 'new_admin':
-        await callback.message.answer(
-            text="Введите telegram id человека (он может узнать его написав нашему боту сообщение /id)"
-        )
-        await state.set_state(utils.Admin.enter_new_admin_id)
-    elif callback.data == 'new_deadline':
-        await callback.message.answer("Добавляем дедлайн")
+#todo можно каждый раз выводить в тексте сообщения введенные данные
+
+@router.callback_query(F.data == 'new_admin')
+async def new_admin(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(
+        text="Введите telegram id человека (он может узнать его написав нашему боту сообщение /id)",
+        reply_markup=keyboards.ADMIN_CANCEL
+    )
+    await state.set_state(utils.Admin.enter_new_admin_id)
+
+
+@router.callback_query(F.data == 'back_to_deadline_date_invitation')
+@router.callback_query(F.data == 'new_deadline')
+async def new_deadline(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(
+        text="Введите дату события в формате: ",  # todo
+        reply_markup=keyboards.ADMIN_CANCEL
+    )
+    await state.set_state(utils.Admin.enter_deadline_date)
+
+
+@router.callback_query(F.data == 'back_to_deadline_name_invitation')
+@router.message(utils.Admin.enter_deadline_date)
+async def enter_deadline_date(message: types.Message | CallbackQuery, state: FSMContext):
+    if isinstance(message, types.Message):
+        deadline_date = message.text
+        if utils.valid_date(deadline_date):
+            # todo temp save date
+            await message.answer(text="Введите имя события дедлайна",
+                                 reply_markup=keyboards.ADMIN_DEADLINE_DATE_BACK_CANCEL)
+            await state.set_state(utils.Admin.enter_deadline_name)
+        else:
+            # todo ...
+            await message.answer(text="Дата должна быть в формате...(к примеру ...) , попробуйте ввести еще раз",
+                                 reply_markup=keyboards.ADMIN_CANCEL)
+    elif isinstance(message, CallbackQuery):
+        await message.message.answer(text="Введите имя события дедлайна",
+                             reply_markup=keyboards.ADMIN_DEADLINE_DATE_BACK_CANCEL)
+        await state.set_state(utils.Admin.enter_deadline_name)
+
+
+@router.callback_query(F.data == 'back_to_deadline_name_invitation') #todo
+@router.message(utils.Admin.enter_deadline_name)
+async def enter_deadline_name(message: types.Message | CallbackQuery, state: FSMContext):
+    if isinstance(message, types.Message):
+        deadline_name = message.text
+        if utils.valid_name(deadline_name):
+            # todo temp save deadline_name
+            await message.answer(text="Введите описание дедлайна",
+                                 reply_markup=keyboards.ADMIN_DEADLINE_NAME_BACK_CANCEL)
+            await state.set_state(utils.Admin.enter_deadline_comment)
+        else:
+            # todo ...
+            await message.answer(text="Имя события дедлайна должно ...(к примеру ...) , попробуйте ввести еще раз",
+                                 reply_markup=keyboards.ADMIN_DEADLINE_DATE_BACK_CANCEL)
+    elif isinstance(message, CallbackQuery):
+        await message.message.answer(text="Введите описание дедлайна", reply_markup=keyboards.ADMIN_DEADLINE_NAME_BACK_CANCEL)
+        await state.set_state(utils.Admin.enter_deadline_comment)
+
+
+@router.message(utils.Admin.enter_deadline_comment)
+async def enter_deadline_comment(message: types.Message | CallbackQuery, state: FSMContext):
+    if isinstance(message, types.Message):
+        deadline_comment = message.text
+        if utils.valid_comment(deadline_comment):
+            # todo temp save deadline_comment + menu редактирования мб/ подтверждения сохранения + отмена сохранения
+            await message.answer(text="Вы ввели: ....",
+                                 # todo reply_markup=keyboards.
+                                 )
+            await state.set_state(utils.Admin.enter_deadline_name)
+        else:
+            # todo ...
+            await message.answer(text="Описание события дедлайна должно ... , попробуйте ввести еще раз",
+                                 reply_markup=keyboards.ADMIN_DEADLINE_NAME_BACK_CANCEL)
+    elif isinstance(message, CallbackQuery):
+        pass
+        # todo что тут можно сделать с логикой редактирования / подтверждения
+        # await message.message.answer(text="Введите имя события дедлайна",
+        #                      reply_markup=keyboards.ADMIN_DEADLINE_DATE_BACK_CANCEL)
+        # await state.set_state(utils.Admin.enter_deadline_name)
+
+
+@router.callback_query(F.data == 'back_to_menu')
+async def back_to_menu(callback: CallbackQuery):
+    await callback.message.answer("Выберите действие:", reply_markup=keyboards.ADMIN_KB)
 
 
 @router.message(utils.Admin.enter_new_admin_id)
-async def new_admin(message: types.Message, state: FSMContext):
+async def enter_admin_id(message: types.Message, state: FSMContext):
     new_admin_id = message.text
     if utils.valid_id(new_admin_id):
         config.admin_id.append(new_admin_id)
-        await message.answer(text="Успешно добавлен новый администратор", reply_markup=keyboards.ADMIN_KB)
-        await state.set_state(None)
-        print("Валидный id")  # todo del
+        await message.answer(text="Успешно добавлен новый администратор", reply_markup=keyboards.ADMIN_CANCEL)
     else:
-        await message.answer(text="Telegram id состоит только из цифр, попробуйте ввести еще раз", reply_markup=keyboards.ADMIN_KB)
-        # todo добавить кнопку отмены
-        print("Ошибочный id")  # todo del
+        await message.answer(text="Telegram id состоит только из цифр, попробуйте ввести еще раз",
+                             reply_markup=keyboards.ADMIN_CANCEL)
+    await state.set_state(None)
 
 
 # @router.message(Command("subscribe"))
@@ -44,14 +118,10 @@ async def new_admin(message: types.Message, state: FSMContext):
 #     await msg.answer("Ты подписался на уведомления!")
 
 
-
-
-
 @router.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     if user_id in config.admin_id:
-        await state.set_state(utils.Admin.choose_option)
         await message.answer("Выберите действие:", reply_markup=keyboards.ADMIN_KB)
     else:
         if users_test.get(user_id) is not None:
