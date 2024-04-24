@@ -1,6 +1,10 @@
 import re
+from datetime import timezone, timedelta
 
 from aiogram.fsm.state import State, StatesGroup
+
+users_test = {}
+tz = timezone(timedelta(hours=3), name='МСК')
 
 
 def valid_id(id):
@@ -8,17 +12,19 @@ def valid_id(id):
 
 
 def valid_date(date):
-    return date #todo
-
-
+    return True if date == 'true' else False;  # todo
 
 
 def valid_comment(comment):
-    return comment   # todo
+    return True if comment == 'true' else False;  # todo
+
 
 def valid_name(name):
-    return name   # todo
+    return True if name == 'true' else False;  # todo
 
+
+def convert_to_datetime(date):
+    return date
 
 
 class Admin(StatesGroup):

@@ -30,6 +30,17 @@ ADMIN_DEADLINE_NAME_BACK_CANCEL = InlineKeyboardMarkup(inline_keyboard=[
 ]
 )
 
+ADMIN_DEADLINE_COMMENT_BACK_CANCEL = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Вернуться в главное меню',
+                          callback_data='back_to_menu')],
+    [InlineKeyboardButton(text='Вернуться на шаг назад(к описанию дедлайна)',
+                          callback_data='back_to_deadline_comment_invitation')],
+]
+)
+
+
+
+
 
 AGREEMENT = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='✅ Принимаю',
