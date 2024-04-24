@@ -31,8 +31,8 @@ class Deadline:
         if not isinstance(name, str):
             raise TypeError(f'Invalid type for the name argument: {type(name)},'
                             f' required type: str')
-        #if not valid_name(name):
-            #raise ValueError("Incorrect name")
+        if not valid_name(name):
+            raise ValueError("Incorrect name")
         self._name = name
 
     @comment.setter
@@ -40,8 +40,8 @@ class Deadline:
         if not isinstance(comment, str):
             raise TypeError(f'Invalid type for the comment argument: {type(comment)},'
                             f' required type: str')
-        #if not valid_comment(comment):
-            #raise ValueError("Incorrect comment")
+        if not valid_comment(comment):
+            raise ValueError("Incorrect comment")
         self._comment = comment
 
     @date.setter
@@ -49,6 +49,6 @@ class Deadline:
         if not isinstance(date, datetime):
             raise TypeError(f'Invalid type for the date argument: {type(date)},'
                             f' required type: datetime')
-        #if not valid_date(date):
-            #raise ValueError("Incorrect date")
+        if not valid_date(date):
+            raise ValueError("Incorrect date")
         self._date = convert_to_datetime(date)
