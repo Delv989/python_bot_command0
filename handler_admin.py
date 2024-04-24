@@ -12,6 +12,33 @@ from deadline import Deadline
 router = Router()
 
 
+@router.callback_query(F.data == 'show_deadlines')
+async def show_deadlines(callback: CallbackQuery, state: FSMContext):
+    deadlines = db.show_all_deadlines()
+    await callback.message.answer(utils.convert_deadlines_to_output(deadlines),
+                                  reply_markup=keyboards.ADMIN_KB_DEADLINE_LIST
+                                  )
+    await state.set_state(utils.Admin.enter_deadline_id)
+
+
+@router.callback_query(F.data == 'delete_deadline_invitation')
+async def delete_deadline_invitation(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer(user_interface.DELETE_DEADLINE, reply_markup=keyboards.ADMIN_CANCEL)
+    await state.set_state(utils.Admin.delete_deadline)
+
+
+@router.message(utils.Admin.delete_deadline)
+async def delete_deadline(message: Message, state: FSMContext):
+    id = message.text
+    if utils.valid_id(id):
+        db.delete_deadline_id(int(id))
+        await message.answer(user_interface.DOUBTFUL_BUT_OK, reply_markup=keyboards.ADMIN_CANCEL)
+        await state.clear()
+    else:
+        await message.answer(text=user_interface.VALIDATE_ID,
+                             reply_markup=keyboards.ADMIN_CANCEL)
+
+
 @router.callback_query(F.data == 'back_to_menu')
 async def back_to_menu(callback: CallbackQuery, state: FSMContext):
     await state.clear()
@@ -33,10 +60,10 @@ async def enter_admin_id(message: Message, state: FSMContext):
     if utils.valid_id(new_admin_id):
         config.admin_id.append(new_admin_id)
         await message.answer(text=user_interface.SUCCESS_ADD_NEW_ADMIN, reply_markup=keyboards.ADMIN_CANCEL)
+        await state.clear()
     else:
         await message.answer(text=user_interface.VALIDATE_ID,
                              reply_markup=keyboards.ADMIN_CANCEL)
-    await state.set_state(None)
 
 
 @router.callback_query(F.data == 'back_to_deadline_date_invitation')

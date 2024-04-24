@@ -10,9 +10,9 @@ import handler_user
 import handler_admin
 import handler_start
 
-
-
 memory = MemoryStorage()
+
+
 async def main():
     bot = Bot(token=config.BOT_TOKEN, parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=memory)
