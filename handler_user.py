@@ -1,6 +1,7 @@
 from aiogram import F, Router
 from aiogram.types import CallbackQuery
-from utils import users_test
+
+import db
 
 import keyboards
 
@@ -10,18 +11,18 @@ router = Router()
 @router.callback_query(F.data == 'agree')
 async def cmd_agree(callback: CallbackQuery):
     user_id = callback.from_user.id
-    if users_test.get(user_id) is None:
+    if not db.is_user_id_in_db(user_id):
         await callback.answer('Вам отправлено окно...')
         await callback.message.edit_text(text="Теперь вы будете получать рассылку!",
                                          reply_markup=keyboards.NEGATION)
-        users_test[user_id] = True
+        db.insert_user_id_db(user_id)
     else:
         await callback.message.edit_text(text="Вы уже подписались на рассылку")
 
 
 @router.callback_query(F.data == 'disagree')
 async def cmd_disagree(callback: CallbackQuery):
-    if users_test.get(callback.from_user.id) is None:
+    if not db.is_user_id_in_db(callback.from_user.id):
         await callback.answer('что-ж.. до новой встречи!')
         await callback.message.edit_text(text="вы многое теряете, если захотите передумать, поменяйте ответ.",
                                          reply_markup=keyboards.AGREEMENT)
@@ -32,9 +33,9 @@ async def cmd_disagree(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'unsubscribe')
 async def unsubscribe_handle(callback: CallbackQuery):
-    if users_test.get(callback.from_user.id) is not None:
+    if db.is_user_id_in_db(callback.from_user.id):
         # todo: сделать удаление с проверкой
-        users_test.pop(callback.from_user.id)
+        db.delete_user_id_db(callback.from_user.id)
         await callback.answer('Жаль терять такого пользователя')
         await callback.message.edit_text(text="вы многое теряете, если захотите передумать, поменяйте ответ.",
                                          reply_markup=keyboards.AGREEMENT)

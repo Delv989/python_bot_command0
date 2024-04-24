@@ -4,7 +4,7 @@ from aiogram import types, Router
 import config
 import user_interface
 import keyboards
-from utils import users_test
+import db
 
 router = Router()
 
@@ -15,7 +15,7 @@ async def start(message: types.Message):
     if user_id in config.admin_id:
         await message.answer("Выберите действие:", reply_markup=keyboards.ADMIN_KB)
     else:
-        if users_test.get(user_id) is not None:
+        if db.is_user_id_in_db(user_id):
             await message.answer(
                 user_interface.TEXT_UNSUBSCRIBE,
                 reply_markup=keyboards.NEGATION)
