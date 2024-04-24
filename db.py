@@ -30,7 +30,8 @@ def delete_user_id_db(user_id: int):
 
 def insert_deadline(dl: deadline.Deadline):
     cursor = conn.cursor()
-    cursor.execute(f"INSERT INTO event(name, date, comment)  VALUES ('{dl.name}', '{dl.date.strftime('%Y-%m-%d %H:%M:%S')}', '{dl.comment}')")
+    cursor.execute(
+        f"INSERT INTO event(name, date, comment)  VALUES ('{dl.name}', '{dl.date.strftime('%Y-%m-%d %H:%M:%S')}', '{dl.comment}')")
     conn.commit()
     cursor.close()
 
@@ -51,7 +52,8 @@ def delete_deadline_date(date: datetime):
 
 def delete_deadline_date_interval(start_date: datetime, finish_date: datetime):
     cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM event WHERE date >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' AND date <= '{finish_date.strftime('%Y-%m-%d %H:%M:%S')}'")
+    cursor.execute(
+        f"DELETE FROM event WHERE date >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' AND date <= '{finish_date.strftime('%Y-%m-%d %H:%M:%S')}'")
     conn.commit()
     cursor.close()
 
@@ -62,8 +64,3 @@ def show_all_deadlines() -> list[tuple]:
     deadlines = cursor.fetchall()
     cursor.close()
     return deadlines
-
-
-
-
-

@@ -28,6 +28,12 @@ def convert_to_datetime(date):
     return ret
 
 
+def convert_deadlines_to_output(deadlines):
+    deadlines = [(deadline.__str__() + '\n') for deadline in deadlines]
+    out = "".join(deadlines)
+    return out
+
+
 def valid_date(date: datetime):
     return date - datetime.now(tz) > timedelta(seconds=1)
 
@@ -38,4 +44,5 @@ class Admin(StatesGroup):
     enter_deadline_name = State()
     enter_deadline_comment = State()
     save_or_cancel = State()
-
+    delete_deadline = State()
+    enter_deadline_id = State()

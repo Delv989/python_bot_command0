@@ -1,10 +1,22 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+ADMIN_KB_DEADLINE_LIST = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Удалить дедлайн(запомните его id)',
+                          callback_data='delete_deadline_invitation')],
+    [InlineKeyboardButton(text='Вернуться в меню',
+                          callback_data='back_to_menu')],
+
+]
+)
+
 ADMIN_KB = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Добавить нового админа',
                           callback_data='new_admin')],
     [InlineKeyboardButton(text='Добавить новый дедлайн',
                           callback_data='new_deadline', )],
+    [InlineKeyboardButton(text='Показать все существующие дедлайны',
+                          callback_data='show_deadlines', )],
+
 ]
 )
 
