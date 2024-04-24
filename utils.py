@@ -1,5 +1,5 @@
 import re
-from datetime import timezone, timedelta
+from datetime import timezone, timedelta, datetime
 
 from aiogram.fsm.state import State, StatesGroup
 
@@ -8,23 +8,28 @@ tz = timezone(timedelta(hours=3), name='МСК')
 
 
 def valid_id(id):
-    return bool(re.match(r'^\d+$', id.strip()))
-
-
-def valid_date(date):
-    return True if date == 'true' else False;  # todo
+    return bool(re.fullmatch(r'^\d+$', id.strip()))
 
 
 def valid_comment(comment):
-    return True if comment == 'true' else False;  # todo
+    return valid_name(comment)
 
 
 def valid_name(name):
-    return True if name == 'true' else False;  # todo
+    return bool(re.fullmatch(r'(\w+[,.:\s_-]*)+', name.strip()))
 
 
 def convert_to_datetime(date):
-    return date
+    try:
+        ret = datetime.strptime(date.strip(), '%d.%m.%Y %H.%M')
+        ret = ret.replace(tzinfo=tz)
+    except ValueError:
+        ret = None
+    return ret
+
+
+def valid_date(date: datetime):
+    return date - datetime.now(tz) > timedelta(seconds=1)
 
 
 class Admin(StatesGroup):
@@ -32,3 +37,5 @@ class Admin(StatesGroup):
     enter_deadline_date = State()
     enter_deadline_name = State()
     enter_deadline_comment = State()
+    save_or_cancel = State()
+

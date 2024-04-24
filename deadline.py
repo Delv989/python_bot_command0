@@ -1,7 +1,6 @@
 from datetime import datetime
 from utils import valid_name
 from utils import valid_comment
-from utils import valid_date
 from utils import convert_to_datetime
 
 
@@ -13,6 +12,10 @@ class Deadline:
         self.name = name
         self.date = date
         self.comment = comment
+
+    @staticmethod
+    def from_dict(dict):
+        return Deadline(dict['name'], dict['comment'], dict['date'])
 
     @property
     def name(self) -> str:
@@ -45,10 +48,8 @@ class Deadline:
         self._comment = comment
 
     @date.setter
-    def date(self, date: str):
+    def date(self, date: datetime):
         if not isinstance(date, datetime):
             raise TypeError(f'Invalid type for the date argument: {type(date)},'
                             f' required type: datetime')
-        if not valid_date(date):
-            raise ValueError("Incorrect date")
-        self._date = convert_to_datetime(date)
+        self._date = date
