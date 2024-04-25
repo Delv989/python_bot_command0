@@ -68,4 +68,6 @@ AGREEMENT = InlineKeyboardMarkup(inline_keyboard=[
 NEGATION = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='❌ Отписаться',
                           callback_data='unsubscribe')],
+    [InlineKeyboardButton(text='Показать все дедлайны',
+                          callback_data='all_deadlines')]
 ])

@@ -46,3 +46,14 @@ class Admin(StatesGroup):
     save_or_cancel = State()
     delete_deadline = State()
     enter_deadline_id = State()
+
+
+def convert_deadlines_to_output_2_users(deadlines):
+    deadlines = [
+        (
+                    f"Дедлайн: {deadline.name}\nСрок окончания: {deadline.date}\nДополнительная информация: {deadline.comment}" + '\n')
+        for deadline in deadlines if deadline is not None]
+    out = "\n".join(deadlines)
+    if len(out) == 0:
+        out = "На данный момент дедлайнов нет"
+    return out

@@ -5,6 +5,7 @@ import bot_tools
 import db_async
 
 import keyboards
+import utils
 
 router = Router()
 
@@ -43,3 +44,13 @@ async def unsubscribe_handle(callback: CallbackQuery):
     else:
         await callback.message.edit_text(text="вы уже отписались от рассылки",
                                          reply_markup=keyboards.AGREEMENT)
+
+
+@router.callback_query(F.data == "all_deadlines")
+async def show_all_deadlines(callback: CallbackQuery):
+    deadlines = await db_async.show_all_deadlines()
+    if await db_async.is_user_id_in_db(callback.from_user.id):
+        await callback.message.answer(utils.convert_deadlines_to_output_2_users(deadlines))
+    else:
+        await callback.message.answer(text="Вы не подписаны на получения рассылки",
+                                      reply_markup=keyboards.AGREEMENT)
