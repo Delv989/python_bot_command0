@@ -120,23 +120,22 @@ async def enter_deadline_name(message: Message | CallbackQuery, state: FSMContex
 
 
 @router.message(utils.Admin.enter_deadline_comment)
-async def enter_deadline_comment(message: Message | CallbackQuery, state: FSMContext):
-    if isinstance(message, Message):
-        deadline_comment = message.text
-        if utils.valid_comment(deadline_comment):
-            await state.update_data(comment=deadline_comment)
-            data = await state.get_data()
-            await message.answer(text=f"Вы ввели дедлайн: \n"
-                                      f"Имя {data['name']}\n"
-                                      f"Дата {data['date']}\n"
-                                      f"Описание {data['comment']}\n"
-                                 ,
-                                 reply_markup=keyboards.ADMIN_DEADLINE_SAVE_CANCEL
-                                 )
-            await state.set_state(utils.Admin.save_or_cancel)
-        else:
-            await message.answer(text=user_interface.VALIDATE_COMMENT,
-                                 reply_markup=keyboards.ADMIN_DEADLINE_NAME_BACK_CANCEL)
+async def enter_deadline_comment(message: Message, state: FSMContext):
+    deadline_comment = message.text
+    if utils.valid_comment(deadline_comment):
+        await state.update_data(comment=deadline_comment)
+        data = await state.get_data()
+        await message.answer(text=f"Вы ввели дедлайн: \n"
+                                  f"Имя {data['name']}\n"
+                                  f"Дата {data['date']}\n"
+                                  f"Описание {data['comment']}\n"
+                             ,
+                             reply_markup=keyboards.ADMIN_DEADLINE_SAVE_CANCEL
+                             )
+        await state.set_state(utils.Admin.save_or_cancel)
+    else:
+        await message.answer(text=user_interface.VALIDATE_COMMENT,
+                             reply_markup=keyboards.ADMIN_DEADLINE_NAME_BACK_CANCEL)
 
 
 @router.callback_query(F.data == 'save_deadline')
