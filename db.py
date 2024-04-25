@@ -71,3 +71,11 @@ def show_all_deadlines() -> list[deadline.Deadline]:
         deadlines.append(cur_deadline)
     cursor.close()
     return deadlines
+
+
+def show_all_users():
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT telegramId FROM persons")
+    people = cursor.fetchall()
+    cursor.close()
+    return people
