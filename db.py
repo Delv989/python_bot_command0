@@ -18,7 +18,9 @@ def insert_user_id_db(user_id: int):
 def is_user_id_in_db(user_id: int) -> bool:
     cursor = conn.cursor()
     cursor.execute(f"SELECT EXISTS(SELECT * FROM persons WHERE telegramId = {user_id})")
-    return cursor.fetchall()[0][0]
+    person = cursor.fetchall()[0][0]
+    cursor.close()
+    return person
 
 
 def delete_user_id_db(user_id: int):
@@ -30,7 +32,8 @@ def delete_user_id_db(user_id: int):
 
 def insert_deadline(dl: deadline.Deadline):
     cursor = conn.cursor()
-    cursor.execute(f"INSERT INTO event(name, date, comment)  VALUES ('{dl.name}', '{dl.date.strftime('%Y-%m-%d %H:%M:%S')}', '{dl.comment}')")
+    cursor.execute(
+        f"INSERT INTO event(name, date, comment)  VALUES ('{dl.name}', '{dl.date.strftime('%Y-%m-%d %H:%M:%S')}', '{dl.comment}')")
     conn.commit()
     cursor.close()
 
@@ -51,7 +54,8 @@ def delete_deadline_date(date: datetime):
 
 def delete_deadline_date_interval(start_date: datetime, finish_date: datetime):
     cursor = conn.cursor()
-    cursor.execute(f"DELETE FROM event WHERE date >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' AND date <= '{finish_date.strftime('%Y-%m-%d %H:%M:%S')}'")
+    cursor.execute(
+        f"DELETE FROM event WHERE date >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' AND date <= '{finish_date.strftime('%Y-%m-%d %H:%M:%S')}'")
     conn.commit()
     cursor.close()
 
@@ -64,6 +68,9 @@ def show_all_deadlines() -> list[tuple]:
     return deadlines
 
 
-
-
-
+def show_all_users() -> list:
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT telegramId FROM persons")
+    people = cursor.fetchall()
+    cursor.close()
+    return people
