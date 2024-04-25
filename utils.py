@@ -16,7 +16,7 @@ def valid_comment(comment):
 
 
 def valid_name(name):
-    return bool(re.fullmatch(r'(\w+[,.:\s_-]*)+', name.strip()))
+    return bool(re.fullmatch(r'([a-zA-Zа-яА-Я]+[,.:\s\d_-]*)+', name.strip()))
 
 
 def convert_to_datetime(date):

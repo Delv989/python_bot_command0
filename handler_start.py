@@ -1,5 +1,6 @@
 from aiogram.filters import Command
 from aiogram import types, Router
+from aiogram.fsm.context import FSMContext
 
 import config
 import user_interface
@@ -10,7 +11,8 @@ router = Router()
 
 
 @router.message(Command("start"))
-async def start(message: types.Message):
+async def start(message: types.Message, state: FSMContext):
+    await state.clear()
     user_id = message.from_user.id
     if user_id in config.admin_id:
         await message.answer("Выберите действие:", reply_markup=keyboards.ADMIN_KB)
@@ -25,6 +27,11 @@ async def start(message: types.Message):
                 reply_markup=keyboards.AGREEMENT)
 
 
+@router.message(Command("id"))
+async def id_handler(msg: types.Message):
+    await msg.answer(f"Твой ID: {msg.from_user.id}")
+
+
 @router.message()
 async def message_handler(msg: types.Message):
-    await msg.answer(f"Твой ID: {msg.from_user.id}")
+    await msg.answer('Извините, я пока ещё не знаю такую команду')
