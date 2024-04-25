@@ -1,14 +1,12 @@
 import re
 from datetime import timezone, timedelta, datetime
-
 from aiogram.fsm.state import State, StatesGroup
 
-users_test = {}
 tz = timezone(timedelta(hours=3), name='МСК')
 
 
-def valid_id(id):
-    return bool(re.fullmatch(r'^\d+$', id.strip()))
+def valid_id(id_):
+    return bool(re.fullmatch(r'^\d+$', id_.strip()))
 
 
 def valid_comment(comment):
@@ -29,8 +27,10 @@ def convert_to_datetime(date):
 
 
 def convert_deadlines_to_output(deadlines):
-    deadlines = [(deadline.__str__() + '\n') for deadline in deadlines]
+    deadlines = [(deadline.__str__() + '\n') for deadline in deadlines if deadline is not None]
     out = "".join(deadlines)
+    if len(out) == 0:
+        out = "На данный момент дедлайнов нет"
     return out
 
 

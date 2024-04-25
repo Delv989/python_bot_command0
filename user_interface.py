@@ -1,5 +1,3 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from utils import tz
 
 TEXT_AGREE = "Это сервис для напоминаниях о дедлайнах официальных мероприятиях. Хотите получать уведомления?"

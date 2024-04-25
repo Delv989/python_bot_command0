@@ -6,7 +6,7 @@ import config
 import user_interface
 import utils
 import keyboards
-import db
+import db_async
 from deadline import Deadline
 
 router = Router()
@@ -14,7 +14,7 @@ router = Router()
 
 @router.callback_query(F.data == 'show_deadlines')
 async def show_deadlines(callback: CallbackQuery, state: FSMContext):
-    deadlines = db.show_all_deadlines()
+    deadlines = await db_async.show_all_deadlines()
     await callback.message.answer(utils.convert_deadlines_to_output(deadlines),
                                   reply_markup=keyboards.ADMIN_KB_DEADLINE_LIST
                                   )
@@ -29,9 +29,9 @@ async def delete_deadline_invitation(callback: CallbackQuery, state: FSMContext)
 
 @router.message(utils.Admin.delete_deadline)
 async def delete_deadline(message: Message, state: FSMContext):
-    id = message.text
-    if utils.valid_id(id):
-        db.delete_deadline_id(int(id))
+    id_ = message.text
+    if utils.valid_id(id_):
+        await db_async.delete_deadline_id(int(id_))
         await message.answer(user_interface.DOUBTFUL_BUT_OK, reply_markup=keyboards.ADMIN_CANCEL)
         await state.clear()
     else:
@@ -58,7 +58,7 @@ async def new_admin(callback: CallbackQuery, state: FSMContext):
 async def enter_admin_id(message: Message, state: FSMContext):
     new_admin_id = message.text
     if utils.valid_id(new_admin_id):
-        config.admin_id.append(new_admin_id)
+        config.admin_id.append(int(new_admin_id))
         await message.answer(text=user_interface.SUCCESS_ADD_NEW_ADMIN, reply_markup=keyboards.ADMIN_CANCEL)
         await state.clear()
     else:
@@ -147,4 +147,4 @@ async def save_deadline(callback: CallbackQuery, state: FSMContext):
     )
     data = await state.get_data()
     await state.clear()
-    db.insert_deadline(Deadline.from_dict(data))
+    await db_async.insert_deadline(Deadline.from_dict(data))

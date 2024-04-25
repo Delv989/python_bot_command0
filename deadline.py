@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import utils
 from utils import valid_name
 from utils import valid_comment
 
@@ -69,11 +68,3 @@ class Deadline:
 
     def __str__(self) -> str:
         return f'Дедлайн, id={self._id}, имя={self._name}, дата={self._date}, комментарий={self._comment}'
-
-
-#
-# d1 = Deadline('name1', 'comment1', datetime.now())
-# d2 = Deadline('name2', 'comment2', datetime.now())
-# d3 = Deadline('name3', 'comment3', datetime.now())
-# lst = [d1, d2, d3]
-# print(utils.convert_deadlines_to_output(lst))
