@@ -2,10 +2,11 @@ import sqlite3
 from datetime import datetime
 import deadline
 
-# cursor.execute("CREATE TABLE event (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR[100], date DATETIME, comment VARCHAR[1000])")
-# cursor.execute("CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, telegramId INTEGER UNIQUE)")
+# cursor.execute("CREATE TABLE IF NOT EXISTS event (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR[100], comment VARCHAR[1000], date DATETIME)")
+# cursor.execute("CREATE TABLE IF NOT EXISTS persons (id INTEGER PRIMARY KEY AUTOINCREMENT, telegramId INTEGER UNIQUE)")
 
-conn = sqlite3.connect("tgbot.sql")
+database_path = "tgbot.sql"
+conn = sqlite3.connect(database_path)
 
 
 def insert_user_id_db(user_id: int):
@@ -58,9 +59,15 @@ def delete_deadline_date_interval(start_date: datetime, finish_date: datetime):
     cursor.close()
 
 
-def show_all_deadlines() -> list[tuple]:
+def show_all_deadlines() -> list[deadline.Deadline]:
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM event ORDER BY date")
-    deadlines = cursor.fetchall()
+    tuple_deadlines = cursor.fetchall()
+
+    deadlines = []
+    for dl in tuple_deadlines:
+        cur_deadline = deadline.Deadline(dl[1], dl[2], datetime.strptime(dl[3], "%Y-%m-%d %H:%M:%S"))
+        cur_deadline.id = dl[0]
+        deadlines.append(cur_deadline)
     cursor.close()
     return deadlines
