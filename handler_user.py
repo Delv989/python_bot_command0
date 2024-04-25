@@ -27,7 +27,7 @@ async def cmd_agree(callback: CallbackQuery):
 async def cmd_disagree(callback: CallbackQuery):
     if not await db_async.is_user_id_in_db(callback.from_user.id):
         await callback.answer('что-ж.. до новой встречи!')
-        await callback.message.edit_text(text="вы многое теряете, если захотите передумать, поменяйте ответ.",
+        await callback.message.edit_text(text="Вы много теряете. Если передумаете, поменяйте ответ.",
                                          reply_markup=keyboards.AGREEMENT)
     else:
         await callback.message.edit_text(text="вы уже подписаны. Хотите отменить подписку?",
@@ -39,7 +39,7 @@ async def unsubscribe_handle(callback: CallbackQuery):
     if await db_async.is_user_id_in_db(callback.from_user.id):
         await db_async.delete_user_id_db(callback.from_user.id)
         await callback.answer('Жаль терять такого пользователя')
-        await callback.message.edit_text(text="вы многое теряете, если захотите передумать, поменяйте ответ.",
+        await callback.message.edit_text(text="Вы много теряете. Если передумаете, поменяйте ответ.s",
                                          reply_markup=keyboards.AGREEMENT)
     else:
         await callback.message.edit_text(text="вы уже отписались от рассылки",
