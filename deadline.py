@@ -1,11 +1,12 @@
 from datetime import datetime
+
 from utils import valid_name
 from utils import valid_comment
-from utils import convert_to_datetime
 
 
 class Deadline:
     def __init__(self, name: str, comment: str, date: datetime):
+        self._id = None
         self._name = None
         self._date = None
         self._comment = None
@@ -14,12 +15,23 @@ class Deadline:
         self.comment = comment
 
     @staticmethod
-    def from_dict(dict):
-        return Deadline(dict['name'], dict['comment'], dict['date'])
+    def from_dict(dict_):
+        return Deadline(dict_['name'], dict_['comment'], dict_['date'])
 
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def id(self) -> int:
+        return self._id
+
+    @id.setter
+    def id(self, id_: int):
+        if not isinstance(id_, int):
+            raise TypeError(f'Invalid type for the id argument: {type(id_)},'
+                            f' required type: int')
+        self._id = id_
 
     @property
     def comment(self) -> str:
@@ -53,3 +65,6 @@ class Deadline:
             raise TypeError(f'Invalid type for the date argument: {type(date)},'
                             f' required type: datetime')
         self._date = date
+
+    def __str__(self) -> str:
+        return f'Дедлайн, id={self._id}, имя={self._name}, дата={self._date}, комментарий={self._comment}'
