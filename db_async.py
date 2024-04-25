@@ -72,3 +72,9 @@ async def show_all_deadlines() -> list[deadline.Deadline]:
                 cur_deadline.id = dl[0]
                 deadlines.append(cur_deadline)
             return deadlines
+
+
+async def show_all_users() -> list:
+    async with aiosqlite.connect(database_path) as db:
+        async with db.execute(f"SELECT telegramId FROM persons") as cursor:
+            return await cursor.fetchall()

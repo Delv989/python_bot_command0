@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-import db
+import db_async
 import main
 import schedule
 
@@ -9,7 +9,7 @@ import template_str
 
 
 async def send_notification(message):
-    people = db.show_all_users()
+    people = await db_async.show_all_users()
     for person in people:
         try:
             await main.bot.send_message(int(person[0]), message)
@@ -20,7 +20,7 @@ async def send_notification(message):
 async def schedule_send_message_every_day():
     now = datetime.now()
     # Список всех событий
-    events = db.show_all_deadlines()
+    events = await db_async.show_all_deadlines()
     for event in events:
         event_time = event.date
         time_difference = event_time - now
@@ -42,7 +42,7 @@ async def schedule_send_message_every_6_hours():
     now = datetime.now()
     if 8 <= now.hour < 23:
         # Список всех событий
-        events = db.show_all_deadlines()
+        events = await db_async.show_all_deadlines()
         for event in events:
             event_time = event.date
             time_difference = event_time - now

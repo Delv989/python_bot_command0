@@ -1,9 +1,8 @@
 from datetime import datetime
 
-import db
+import db_async
 import main
 import template_str
-import utils
 from deadline import Deadline
 
 
@@ -17,7 +16,7 @@ async def send_msg_2_user(user_id: int, msg: str):
 async def send_deadline_to_users(user_id: int):
     now = datetime.now()
     if now.hour >= 13:
-        events = db.show_all_deadlines()
+        events = await db_async.show_all_deadlines()
         for event in events:
             event_time = event.date
             time_difference = event_time - now
@@ -31,7 +30,7 @@ async def send_deadline_to_users(user_id: int):
 
 async def send_new_deadline(deadline: Deadline):
     now = datetime.now()
-    people = db.show_all_users()
+    people = await db_async.show_all_users()
     time_difference = deadline.date - now
     days_left = time_difference.days
     hour_left = time_difference.seconds // 3600
