@@ -5,6 +5,8 @@ import db
 import main
 import schedule
 
+import template_str
+
 
 async def send_notification(message):
     people = db.show_all_users()
@@ -20,13 +22,11 @@ async def schedule_send_message_every_day():
     # Список всех событий
     events = db.show_all_deadlines()
     for event in events:
-        event_time = datetime.strptime(event[2], '%Y-%m-%d %H:%M:%S')
+        event_time = event.date
         time_difference = event_time - now
         days_left = time_difference.days
         if 0 < days_left <= 7:
-            await send_notification(f"До конца {event[1]} осталось {days_left} дней."
-                                    f" Закончится: {event[2]}. "
-                                    f"Важно: {event[3]}.")
+            await send_notification(template_str.create_long_time_info(event, days_left))
 
 
 async def scheduler_task_every_day():
@@ -44,19 +44,17 @@ async def schedule_send_message_every_6_hours():
         # Список всех событий
         events = db.show_all_deadlines()
         for event in events:
-            event_time = datetime.strptime(event[2], '%Y-%m-%d %H:%M:%S')
+            event_time = event.date
             time_difference = event_time - now
             days_left = time_difference.days
             hour_left = time_difference.seconds // 3600
             if days_left == 0:
-                await send_notification(f"До конца {event[1]} осталось {hour_left} часов."
-                                        f" Закончится: {event[2]}. "
-                                        f"Важно: {event[3]}.")
+                await send_notification(template_str.create_close_time_info(event, hour_left))
 
 
 scheduler = AsyncIOScheduler()
 
 
 async def scheduler_task_every_6_hours():
-    scheduler.add_job(schedule_send_message_every_6_hours, 'cron', hour='*/6')
+    scheduler.add_job(schedule_send_message_every_6_hours, 'cron', hour='*/3')
     scheduler.start()

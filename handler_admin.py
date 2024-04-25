@@ -2,6 +2,7 @@ from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
+import bot_tools
 import config
 import user_interface
 import utils
@@ -147,3 +148,4 @@ async def save_deadline(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     await state.clear()
     await db_async.insert_deadline(Deadline.from_dict(data))
+    await bot_tools.send_deadline_to_users(Deadline.from_dict(data))
